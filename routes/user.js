@@ -28,7 +28,7 @@ router.post("/user/signup", async (req, res) => {
       // Encrypter le mot de pass
       const salt = uid2(64);
       const hash = SHA256(password + salt).toString(encBase64);
-      // 2 Céer le nouvel utilisateur
+      // 2 Créer le nouvel utilisateur
       const newUser = new User({
         email: email,
         account: {
