@@ -76,7 +76,7 @@ app.all("*", (req, res) => {
   res.status(404).json({ message: "Page not Found" });
 });
 
-const port = 4000;
+const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`Server has started, listening on ${port}`);
 });
