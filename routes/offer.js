@@ -17,7 +17,7 @@ router.get("/offers", async (req, res) => {
 
     // passage dans différentes conditions pour savoir quel(s) filtre(s) a soumis l'utilisateur
     if (req.query.title) {
-      filters.title = new RegExp(req.query.title, "i");
+      filters.product_name = new RegExp(req.query.title, "i");
     }
     if (req.query.priceMin) {
       filters.price = {
@@ -48,9 +48,11 @@ router.get("/offers", async (req, res) => {
     }
 
     // les query sont par défaut des chaînes de caractères
-    // les méthodes sort(), skip() et limi() n'acceptent que des nombres
+    // les méthodes sort(), skip() et limit() n'acceptent que des nombres
     let page = Number(req.query.page);
     let limit = Number(req.query.limit);
+
+    console.log(filters);
 
     // Rechercher dans la BDD les annonces qui match avec les query envoyées
     // Notez que l'on peut chaîner les méthodes
