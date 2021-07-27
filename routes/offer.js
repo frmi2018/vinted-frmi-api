@@ -19,17 +19,17 @@ router.get("/offers", async (req, res) => {
     if (req.query.title) {
       filters.product_name = new RegExp(req.query.title, "i");
     }
-    if (req.query.priceMin) {
-      filters.price = {
-        $gte: req.query.priceMin,
+    if (req.query.pricemin) {
+      filters.product_price = {
+        $gte: req.query.pricemin,
       };
     }
-    if (req.query.priceMax) {
-      if (filters.price) {
-        filters.price.$lte = req.query.priceMax;
+    if (req.query.pricemax) {
+      if (filters.product_price) {
+        filters.product_price.$lte = req.query.pricemax;
       } else {
-        filters.price = {
-          $lte: req.query.priceMax,
+        filters.product_price = {
+          $lte: req.query.pricemax,
         };
       }
     }
@@ -42,17 +42,15 @@ router.get("/offers", async (req, res) => {
     } else if (req.query.sort === "date-desc") {
       sort = { created: "desc" };
     } else if (req.query.sort === "price-asc") {
-      sort = { price: "asc" };
+      sort = { product_price: "asc" };
     } else if (req.query.sort === "price-desc") {
-      sort = { price: "desc" };
+      sort = { product_price: "desc" };
     }
 
     // les query sont par défaut des chaînes de caractères
     // les méthodes sort(), skip() et limit() n'acceptent que des nombres
     let page = Number(req.query.page);
     let limit = Number(req.query.limit);
-
-    console.log(filters);
 
     // Rechercher dans la BDD les annonces qui match avec les query envoyées
     // Notez que l'on peut chaîner les méthodes
