@@ -45,23 +45,26 @@ app.use(offerRoutes);
 app.post("/payment", async (req, res) => {
   const stripeToken = req.fields.stripeToken;
   // -----
-  // TODO
   // récupérer :
+  // username de l'acheteur
+  const userName = req.fields.userName;
   // id de l'acheteur
-  // prix de l'objet (convertir en centime x100)
+  const userId = req.fields.userId;
   // nom de l'objet
+  const objectName = req.fields.objectName;
+  // prix de l'objet (convertir en centime x100)
+  const objectPrice = req.fields.objectPrice;
   // -----
 
   // Créer la transaction
   try {
     const response = await stripe.charges.create({
-      amount: 100,
+      amount: objectPrice,
       currency: "eur",
-      description: "La description du produit acheté",
+      description: `${objectName} acheté par ${userName} (ID: ${userId})`,
       // Envoi du token
       source: stripeToken,
     });
-    // console.log(response);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

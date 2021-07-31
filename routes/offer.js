@@ -71,7 +71,6 @@ router.get("/offers", async (req, res) => {
       offers: offers,
     });
   } catch (error) {
-    console.log(error.message);
     res.status(400).json({ message: error.message });
   }
 });
@@ -85,7 +84,6 @@ router.get("/offer/:id", async (req, res) => {
     });
     res.json(offer);
   } catch (error) {
-    console.log(error.message);
     res.status(400).json({ message: error.message });
   }
 });
@@ -93,9 +91,6 @@ router.get("/offer/:id", async (req, res) => {
 // Route qui permet de poster une nouvelle annonce
 router.post("/offer/publish", isAuthenticated, async (req, res) => {
   try {
-    // console.log(req.fields);
-    // console.log(req.files.picture.path);
-
     const { title, description, price, condition, city, brand, size, color } =
       req.fields;
 
@@ -113,13 +108,11 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
       ],
       owner: req.user,
     });
-    // console.log(newOffer);
 
     // 2 envoyer l'image à cloudinary
     const result = await cloudinary.uploader.upload(req.files.picture.path, {
       folder: `/vinted/offers/${newOffer._id}`,
     });
-    // console.log(result);
 
     // 3 ajouter image à l'offre
     newOffer.product_image = result;

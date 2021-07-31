@@ -7,12 +7,16 @@ const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
 
+// Import package Cloudinary
+const cloudinary = require("cloudinary").v2;
+
 // Import modèles
 const User = require("../models/User");
 
 // Route pour créer un nouvel utilisateur
 router.post("/user/signup", async (req, res) => {
   const { email, username, phone, password } = req.fields;
+
   try {
     // Vérifier si email déjà dans BDD
     const user = await User.findOne({ email: email });
@@ -39,6 +43,17 @@ router.post("/user/signup", async (req, res) => {
         hash: hash,
         salt: salt,
       });
+
+      // upload avatar (optionnel)
+      if (req.files.avatar) {
+        // envoyer l'image à cloudinary
+        const avatar = await cloudinary.uploader.upload(req.files.avatar.path, {
+          folder: `/vinted/users/avatar/${newUser.id}`,
+        });
+        // ajouter image au compte utilisateur
+        newUser.account.avatar = avatar;
+      }
+
       // 3 Sauvegarder ce nouvel utilisateur dans la BDD
       await newUser.save();
       // 4 répondre au client
@@ -74,11 +89,15 @@ router.post("/user/login", async (req, res) => {
         });
       } else {
         // Le mot de passe n'est pas correct ?
-        res.status(401).json({ message: "unauthorized" });
+        res.status(401).json({
+          message: "Wrong email and/or wrong password, please try again",
+        });
       }
     } else {
       // L'email n'existe pas dans la BDD ?
-      res.status(401).json({ message: "unauthorized" });
+      res.status(401).json({
+        message: `the mail ${email} is not known, please enter a valid email`,
+      });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });
