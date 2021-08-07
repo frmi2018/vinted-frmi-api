@@ -13,6 +13,25 @@ const cloudinary = require("cloudinary").v2;
 // Import modèles
 const User = require("../models/User");
 
+// Route qui permmet de récupérer les informations d'un utilisateur en fonction de son id
+router.get("/user/member/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    const response = {
+      _id: user._id,
+      username: user.account.username,
+      email: user.email,
+      phone: user.account.phone,
+    };
+    if (user.account.avatar) {
+      response.avatar = user.account.avatar.secure_url;
+    }
+    res.json(response);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 // Route pour créer un nouvel utilisateur
 router.post("/user/signup", async (req, res) => {
   const { email, username, phone, password } = req.fields;
