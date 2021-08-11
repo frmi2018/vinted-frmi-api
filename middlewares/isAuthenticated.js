@@ -1,8 +1,8 @@
 const User = require("../models/User");
 
 const isAuthenticated = async (req, res, next) => {
-  try {
-    if (req.headers.authorization) {
+  if (req.headers.authorization) {
+    try {
       // Garder que le numéro du token
       const token = req.headers.authorization.replace("Bearer ", "");
       // Chercher dans BDD le user qui possède ce token
@@ -15,13 +15,13 @@ const isAuthenticated = async (req, res, next) => {
         req.user = user;
         return next();
       } else {
-        return res.status(401).json({ mesage: "Unauthorized" });
+        return res.status(401).json({ message: "Unauthorized" });
       }
-    } else {
-      return res.status(401).json({ mesage: "Unauthorized" });
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
     }
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
+  } else {
+    return res.status(401).json({ message: "Unauthorized" });
   }
 };
 
